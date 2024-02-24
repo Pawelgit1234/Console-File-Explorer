@@ -33,6 +33,7 @@ namespace cfe
 	private:
 		void draw();
 
+		unsigned short pos_;
 		std::string path_;
 	};
 }

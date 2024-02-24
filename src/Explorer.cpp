@@ -2,7 +2,7 @@
 
 namespace cfe
 {
-	Explorer::Explorer() noexcept
+	Explorer::Explorer() noexcept : pos_(0)
 	{
 		char path[MAX_PATH] = { 0 };
 		GetModuleFileNameA(NULL, path, MAX_PATH);
@@ -24,14 +24,25 @@ namespace cfe
 
 	void Explorer::up()
 	{
-
-		draw();
+		if (pos_ > 0)
+		{
+			pos_--;
+			draw();
+		}
 	}
 
 	void Explorer::down()
 	{
+		int file_count = 0;
+		for (const auto& entry : std::filesystem::directory_iterator(path_))
+			if (std::filesystem::is_regular_file(entry.path()))
+				file_count++;
 
-		draw();
+		if (pos_ < file_count - 1)
+		{
+			pos_++;
+			draw();
+		}
 	}
 
 	void Explorer::openFile()
@@ -73,19 +84,25 @@ namespace cfe
 	void Explorer::draw()
 	{
 		system("cls");
-		std::cout << "\033[44;37m";
+		
 		std::cout << "_______________________________________________" << std::endl;
 
+		int pos = 0;
 		for (const auto& entry : std::filesystem::directory_iterator(path_))
 		{
 			if (std::filesystem::is_regular_file(entry.path()))
 			{
-				std::cout << entry.path().filename().string() << std::endl;
+				if (pos_ == pos)
+					std::cout << "\033[44;37m" << entry.path().filename().string() << "\033[0m" << std::endl;
+				else
+					std::cout << entry.path().filename().string() << std::endl;
+
+				pos++;
 			}
 		}
 
+		std::cout << pos_ << std::endl;
 		std::cout << path_ << std::endl;
 		std::cout << "_______________________________________________" << std::endl;
-		std::cout << "\033[0m";
 	}
 }

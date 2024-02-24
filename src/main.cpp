@@ -23,6 +23,13 @@ int main(int argc, char* argv[])
 		case 77:
 			explorer.downFolder();
 			break;
+		case 'p':
+			system("cls");
+			std::string path;
+			std::cout << "Your path: ";
+			std::cin >> path;
+			explorer.setPath(path);
+			break;
 		}
 	}
 

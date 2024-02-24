@@ -3,6 +3,7 @@
 #include <string>
 #include <filesystem>
 #include <iostream>
+#include <iomanip>
 #include <windows.h>
 
 namespace cfe
@@ -29,6 +30,8 @@ namespace cfe
 
 		void changeFileName();
 		void changeFolderName();
+
+		void setPath(const std::string& path) { path_ = path; draw(); }
 
 	private:
 		void draw();

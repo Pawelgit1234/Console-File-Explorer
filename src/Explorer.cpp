@@ -12,14 +12,32 @@ namespace cfe
 
 	void Explorer::upFolder()
 	{
-
-		draw();
+		std::filesystem::path parent_path = std::filesystem::path(path_).parent_path();
+		if (!parent_path.empty())
+		{
+			path_ = parent_path.string();
+			pos_ = 0;
+			draw();
+		}
 	}
 
 	void Explorer::downFolder()
 	{
-
-		draw();
+		int selected_pos = 0;
+		for (const auto& entry : std::filesystem::directory_iterator(path_))
+		{
+			if (selected_pos == pos_)
+			{
+				if (std::filesystem::is_directory(entry.path()))
+				{
+					path_ = entry.path().string();
+					pos_ = 0;
+					draw();
+				}
+				break;
+			}
+			selected_pos++;
+		}
 	}
 
 	void Explorer::up()
@@ -35,8 +53,7 @@ namespace cfe
 	{
 		int file_count = 0;
 		for (const auto& entry : std::filesystem::directory_iterator(path_))
-			if (std::filesystem::is_regular_file(entry.path()))
-				file_count++;
+			file_count++;
 
 		if (pos_ < file_count - 1)
 		{
@@ -90,19 +107,15 @@ namespace cfe
 		int pos = 0;
 		for (const auto& entry : std::filesystem::directory_iterator(path_))
 		{
-			if (std::filesystem::is_regular_file(entry.path()))
-			{
-				if (pos_ == pos)
-					std::cout << "\033[44;37m" << entry.path().filename().string() << "\033[0m" << std::endl;
-				else
-					std::cout << entry.path().filename().string() << std::endl;
+			if (pos_ == pos)
+				std::cout << "\033[44;37m" << entry.path().filename().string() << "\033[0m" << std::endl;
+			else
+				std::cout << entry.path().filename().string() << std::endl;
 
-				pos++;
-			}
+			pos++;
 		}
 
-		std::cout << pos_ << std::endl;
-		std::cout << path_ << std::endl;
+		std::cout << std::endl <<  "\033[42m" << path_ << "\033[0m" << std::endl;
 		std::cout << "_______________________________________________" << std::endl;
 	}
 }

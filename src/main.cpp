@@ -1,10 +1,13 @@
 #include "Explorer.hpp"
 
 #include <conio.h>
+#include <locale>
 
 
 int main(int argc, char* argv[])
 {
+	SetConsoleOutputCP(CP_UTF8);
+	std::setlocale(LC_ALL, "Russian");
 	cfe::Explorer explorer;
 
 	while (true)
@@ -25,9 +28,9 @@ int main(int argc, char* argv[])
 			break;
 		case 'p':
 			system("cls");
-			std::string path;
+			std::wstring path;
 			std::cout << "Your path: ";
-			std::cin >> path;
+			std::wcin >> path;
 			explorer.setPath(path);
 			break;
 		}

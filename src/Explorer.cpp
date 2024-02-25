@@ -6,7 +6,7 @@ namespace cfe
 	{
 		char path[MAX_PATH] = { 0 };
 		GetModuleFileNameA(NULL, path, MAX_PATH);
-		path_ = std::filesystem::path(path).parent_path().string();
+		path_ = std::filesystem::path(path).parent_path().wstring();
 		draw();
 	}
 
@@ -15,7 +15,7 @@ namespace cfe
 		std::filesystem::path parent_path = std::filesystem::path(path_).parent_path();
 		if (!parent_path.empty())
 		{
-			path_ = parent_path.string();
+			path_ = parent_path.wstring();
 			pos_ = 0;
 			draw();
 		}
@@ -30,7 +30,7 @@ namespace cfe
 			{
 				if (std::filesystem::is_directory(entry.path()))
 				{
-					path_ = entry.path().string();
+					path_ = entry.path().wstring();
 					pos_ = 0;
 					draw();
 				}
@@ -106,23 +106,24 @@ namespace cfe
 
 		int pos = 0;
 		int max_filename_length = 30;
+		int max_filesize_length = 12;
 
 		for (const auto& entry : std::filesystem::directory_iterator(path_))
 		{
-			std::string filename = entry.path().filename().string();
+			std::wstring filename = entry.path().filename().wstring();
 			if (filename.length() > max_filename_length)
-				filename = filename.substr(0, max_filename_length - 3) + "...";
+				filename = filename.substr(0, max_filename_length - 3) + L"...";
 
-			std::cout << std::left << std::setw(max_filename_length) << std::setfill(' ');
+			std::wcout << std::left << std::setw(max_filename_length) << std::setfill(L' ');
 
 			if (pos_ == pos)
 			{
 				HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 				SetConsoleTextAttribute(hConsole, FOREGROUND_INTENSITY | BACKGROUND_BLUE);
-				std::cout << filename;
+				std::wcout << filename;
 			}
 			else
-				std::cout << filename;
+				std::wcout << filename;
 
 			if (entry.is_regular_file())
 				std::cout << " \033[42;30mF\033[0m"; 
@@ -141,11 +142,13 @@ namespace cfe
 			else
 				std::cout << " \033[40;31m?\033[0m";
 
-			std::cout << "|" << std::endl;
+			std::cout << "|";
+			std::cout << std::left << std::setw(max_filesize_length) << std::setfill(' ');
+			std::cout << std::filesystem::file_size(entry.path()) << '|' << std::endl;
 			pos++;
 		}
 
-		std::cout << std::endl << "\033[42m" << path_ << "\033[0m" << std::endl;
+		std::wcout << std::endl << L"\033[42m" << path_ << L"\033[0m" << std::endl;
 		std::cout << "_______________________________________________" << std::endl;
 	}
 }

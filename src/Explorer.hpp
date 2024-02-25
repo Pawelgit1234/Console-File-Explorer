@@ -31,13 +31,13 @@ namespace cfe
 		void changeFileName();
 		void changeFolderName();
 
-		void setPath(const std::string& path) { path_ = path; draw(); }
+		void setPath(const std::wstring& path) { path_ = path; draw(); }
 
 	private:
 		void draw();
 
 		unsigned short pos_;
-		std::string path_;
+		std::wstring path_;
 	};
 }
 

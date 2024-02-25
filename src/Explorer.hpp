@@ -4,10 +4,14 @@
 #include <filesystem>
 #include <iostream>
 #include <iomanip>
+#include <ctime>
+#include <format>
 #include <windows.h>
 
 namespace cfe
 {
+	void printRepeatedCharacter(char symbol, int count);
+
 	class Explorer
 	{
 	public:

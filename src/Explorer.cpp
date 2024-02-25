@@ -102,7 +102,15 @@ namespace cfe
 	{
 		system("cls");
 
-		std::cout << "_______________________________________________" << std::endl;
+		cfe::printRepeatedCharacter('_', 65);
+		std::cout << std::endl << "Name";
+		cfe::printRepeatedCharacter(' ', 28);
+		std::cout << "|Size";
+		cfe::printRepeatedCharacter(' ', 8);
+		std::cout << "|Modify Time";
+		cfe::printRepeatedCharacter(' ', 8);
+		std::cout << '|';
+		std::cout << std::endl;
 
 		int pos = 0;
 		int max_filename_length = 30;
@@ -144,11 +152,22 @@ namespace cfe
 
 			std::cout << "|";
 			std::cout << std::left << std::setw(max_filesize_length) << std::setfill(' ');
-			std::cout << std::filesystem::file_size(entry.path()) << '|' << std::endl;
+			std::cout << std::filesystem::file_size(entry.path()) << '|';
+
+			std::filesystem::file_time_type ftime = entry.last_write_time();
+			std::string strtime = std::format("{}", ftime).substr(0, 19);
+			std::cout << strtime << '|' << std::endl;
+
 			pos++;
 		}
 
-		std::wcout << std::endl << L"\033[42m" << path_ << L"\033[0m" << std::endl;
-		std::cout << "_______________________________________________" << std::endl;
+		std::wcout << L"\033[42m" << path_ << L"\033[0m" << std::endl;
+		cfe::printRepeatedCharacter('_', 65);
+	}
+
+	void printRepeatedCharacter(char symbol, int count)
+	{
+		for (int i = 0; i < count; ++i)
+			std::cout << symbol;
 	}
 }

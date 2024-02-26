@@ -2,7 +2,7 @@
 
 namespace cfe
 {
-	Explorer::Explorer() noexcept : pos_(0)
+	Explorer::Explorer() noexcept : pos_(0), is_at_file_(false)
 	{
 		char path[MAX_PATH] = { 0 };
 		GetModuleFileNameA(NULL, path, MAX_PATH);
@@ -10,8 +10,11 @@ namespace cfe
 		draw();
 	}
 
-	void Explorer::upFolder()
+	void Explorer::upPath()
 	{
+		if (is_at_file_)
+			is_at_file_ = false;
+
 		std::filesystem::path parent_path = std::filesystem::path(path_).parent_path();
 		if (!parent_path.empty())
 		{
@@ -21,8 +24,11 @@ namespace cfe
 		}
 	}
 
-	void Explorer::downFolder()
+	void Explorer::downPath()
 	{
+		if (is_at_file_)
+			return;
+
 		int selected_pos = 0;
 		for (const auto& entry : std::filesystem::directory_iterator(path_))
 		{
@@ -34,6 +40,12 @@ namespace cfe
 					pos_ = 0;
 					draw();
 				}
+				else if (std::filesystem::is_regular_file(entry.path()))
+				{
+					is_at_file_ = true;
+					path_ = entry.path().wstring();
+					openFile();
+				}
 				break;
 			}
 			selected_pos++;
@@ -42,6 +54,9 @@ namespace cfe
 
 	void Explorer::up()
 	{
+		if (is_at_file_)
+			return;
+
 		if (pos_ > 0)
 		{
 			pos_--;
@@ -51,6 +66,9 @@ namespace cfe
 
 	void Explorer::down()
 	{
+		if (is_at_file_)
+			return;
+
 		int file_count = 0;
 		for (const auto& entry : std::filesystem::directory_iterator(path_))
 			file_count++;
@@ -64,14 +82,19 @@ namespace cfe
 
 	void Explorer::openFile()
 	{
-	}
+		system("cls");
+		std::ifstream file(path_);
 
-	void Explorer::changeFileContent()
-	{
-	}
+		if (file.is_open()) {
+			std::string line;
 
-	void Explorer::closeFile()
-	{
+			while (std::getline(file, line))
+				std::cout << line << std::endl;
+
+			file.close();
+		}
+		else 
+			std::cerr << "Failed to open file." << std::endl;
 	}
 
 	void Explorer::createFile()
@@ -163,11 +186,15 @@ namespace cfe
 
 		std::wcout << L"\033[42m" << path_ << L"\033[0m" << std::endl;
 		cfe::printRepeatedCharacter('_', 65);
+		std::cout << '|' << std::endl;
 	}
 
 	void printRepeatedCharacter(char symbol, int count)
 	{
+		std::string str;
+		str.reserve(count);
 		for (int i = 0; i < count; ++i)
-			std::cout << symbol;
+			str += symbol;
+		std::cout << str;
 	}
 }

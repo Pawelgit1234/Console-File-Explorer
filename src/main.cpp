@@ -1,6 +1,5 @@
 #include "Explorer.hpp"
 
-#include <conio.h>
 #include <locale>
 
 
@@ -21,10 +20,10 @@ int main(int argc, char* argv[])
 			explorer.down();
 			break;
 		case 75:
-			explorer.upFolder();
+			explorer.upPath();
 			break;
 		case 77:
-			explorer.downFolder();
+			explorer.downPath();
 			break;
 		case 'p':
 			system("cls");

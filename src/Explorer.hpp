@@ -2,11 +2,13 @@
 
 #include <string>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <iomanip>
 #include <ctime>
 #include <format>
 #include <windows.h>
+#include <conio.h>
 
 namespace cfe
 {
@@ -18,15 +20,12 @@ namespace cfe
 		Explorer() noexcept;
 		~Explorer() = default;
 
-		void upFolder();
-		void downFolder();
+		void upPath();
+		void downPath();
 		void up();
 		void down();
 
 		void openFile();
-		void changeFileContent();
-		void closeFile();
-
 		void createFile();
 		void createFolder();
 		void deleteFile();
@@ -42,6 +41,8 @@ namespace cfe
 
 		unsigned short pos_;
 		std::wstring path_;
+
+		bool is_at_file_;
 	};
 }
 

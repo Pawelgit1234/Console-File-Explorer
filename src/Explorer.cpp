@@ -97,28 +97,71 @@ namespace cfe
 			std::cerr << "Failed to open file." << std::endl;
 	}
 
-	void Explorer::createFile()
+	void Explorer::createFile(std::wstring& name)
 	{
+		std::wstring full_path = path_ + L"\\" + name;
+		std::ofstream new_file(full_path);
+		if (new_file.is_open())
+		{
+			new_file.close();
+			draw();
+		}
+		else
+			std::cerr << "Failed to create object." << std::endl;
 	}
 
-	void Explorer::createFolder()
+	void Explorer::createFolder(std::wstring& name)
 	{
+		std::wstring full_path = path_ + L"\\" + name;
+		if (std::filesystem::create_directory(full_path))
+			draw();
+		else
+			std::cerr << "Failed to create folder." << std::endl;
+
 	}
 
-	void Explorer::deleteFile()
+	void Explorer::deleteObject()
 	{
+		int selected_pos = 0;
+		for (const auto& entry : std::filesystem::directory_iterator(path_))
+		{
+			if (selected_pos == pos_)
+			{
+				if (std::filesystem::is_regular_file(entry.path()))
+				{
+					if (std::filesystem::remove(entry.path()))
+						draw();
+					else
+						std::cerr << "Failed to delete file." << std::endl;
+					break;
+				}
+				else if (std::filesystem::is_directory(entry.path()))
+				{
+					if (std::filesystem::remove_all(entry.path()))
+						draw();
+					else
+						std::cerr << "Failed to delete directory." << std::endl;
+					break;
+				}
+			}
+			selected_pos++;
+		}
 	}
 
-	void Explorer::deleteFolder()
+	void Explorer::changeName(std::wstring& name)
 	{
-	}
-
-	void Explorer::changeFileName()
-	{
-	}
-
-	void Explorer::changeFolderName()
-	{
+		int selected_pos = 0;
+		for (const auto& entry : std::filesystem::directory_iterator(path_))
+		{
+			if (selected_pos == pos_)
+			{
+				std::wstring new_path = entry.path().parent_path().wstring() + L"\\" + name;
+				std::filesystem::rename(entry.path(), new_path);
+				draw();
+				break;
+			}
+			selected_pos++;
+		}
 	}
 
 	void Explorer::draw()

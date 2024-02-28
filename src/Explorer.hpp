@@ -26,13 +26,11 @@ namespace cfe
 		void down();
 
 		void openFile();
-		void createFile();
-		void createFolder();
-		void deleteFile();
-		void deleteFolder();
+		void createFile(std::wstring& name);
+		void createFolder(std::wstring& name);
+		void deleteObject();
 
-		void changeFileName();
-		void changeFolderName();
+		void changeName(std::wstring& name);
 
 		void setPath(const std::wstring& path) { path_ = path; draw(); }
 
